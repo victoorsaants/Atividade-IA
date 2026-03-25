@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TuristaIA - Seu Guia Inteligente</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo-area">
+                <div class="logo-icon">🌍</div>
+                <h1>TuristaIA</h1>
+            </div>
+            <div class="status-indicator">
+                <span class="dot"></span> Online
+            </div>
+        </header>
+
+        <main class="chat-area" id="chat-messages">
+            <div class="message ai-message">
+                <div class="message-content">
+                    Olá! Sou o **TuristaIA**, seu assistente pessoal de viagens. ✈️<br><br>
+                    Posso te dar informações sobre destinos como **Paris**, **Tóquio** ou **Rio de Janeiro**. 
+                    O que você gostaria de saber hoje?
+                </div>
+                <div class="message-time">Agora</div>
+            </div>
+        </main>
+
+        <div class="suggestions" id="suggestions">
+            <button class="suggestion-btn" onclick="useSuggest('O que fazer em Paris?')">O que fazer em Paris?</button>
+            <button class="suggestion-btn" onclick="useSuggest('Clima em Tóquio')">Clima em Tóquio</button>
+            <button class="suggestion-btn" onclick="useSuggest('Comida no Rio')">Comida no Rio</button>
+        </div>
+
+        <footer class="input-area">
+            <form id="chat-form">
+                <input type="text" id="user-input" placeholder="Pergunte sobre um destino..." autocomplete="off">
+                <button type="submit" id="send-btn">
+                    <svg viewBox="0 0 24 24" width="24" height="24">
+                        <path fill="currentColor" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path>
+                    </svg>
+                </button>
+            </form>
+        </footer>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
