@@ -70,19 +70,34 @@ body {
 
 .status-indicator {
     font-size: 0.85rem;
-    color: var(--accent);
     display: flex;
     align-items: center;
     gap: 8px;
 }
 
+.status-indicator.remote {
+    color: var(--accent);
+}
+
+.status-indicator.local {
+    color: #fbbf24;
+}
+
 .dot {
     width: 8px;
     height: 8px;
-    background: var(--accent);
     border-radius: 50%;
-    box-shadow: 0 0 10px var(--accent);
     animation: pulse 2s infinite;
+}
+
+.status-indicator.remote .dot {
+    background: var(--accent);
+    box-shadow: 0 0 10px var(--accent);
+}
+
+.status-indicator.local .dot {
+    background: #fbbf24;
+    box-shadow: 0 0 10px #fbbf24;
 }
 
 /* Chat Area */
@@ -125,6 +140,10 @@ body {
     border-radius: var(--radius);
     line-height: 1.5;
     font-size: 0.95rem;
+}
+
+.message-content strong {
+    font-weight: 600;
 }
 
 .ai-message .message-content {
@@ -177,6 +196,10 @@ body {
     gap: 10px;
     overflow-x: auto;
     scrollbar-width: none;
+}
+
+.suggestions:empty {
+    display: none;
 }
 
 .suggestions::-webkit-scrollbar {

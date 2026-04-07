@@ -13,35 +13,30 @@
     <div class="app-container">
         <header class="app-header">
             <div class="logo-area">
-                <div class="logo-icon">🌍</div>
+                <div class="logo-icon">&#127760;</div>
                 <h1>TuristaIA</h1>
             </div>
-            <div class="status-indicator">
-                <span class="dot"></span> Online
+            <div class="status-indicator remote" id="status-indicator">
+                <span class="dot"></span>
+                <span id="status-label">Conectando</span>
             </div>
         </header>
 
         <main class="chat-area" id="chat-messages">
             <div class="message ai-message">
-                <div class="message-content">
-                    Olá! Sou o **TuristaIA**, seu assistente pessoal de viagens. ✈️<br><br>
-                    Posso te dar informações sobre destinos como **Paris**, **Tóquio** ou **Rio de Janeiro**. 
-                    O que você gostaria de saber hoje?
+                <div class="message-content" id="welcome-message">
+                    Carregando a base turística do projeto...
                 </div>
                 <div class="message-time">Agora</div>
             </div>
         </main>
 
-        <div class="suggestions" id="suggestions">
-            <button class="suggestion-btn" onclick="useSuggest('O que fazer em Paris?')">O que fazer em Paris?</button>
-            <button class="suggestion-btn" onclick="useSuggest('Clima em Tóquio')">Clima em Tóquio</button>
-            <button class="suggestion-btn" onclick="useSuggest('Comida no Rio')">Comida no Rio</button>
-        </div>
+        <div class="suggestions" id="suggestions"></div>
 
         <footer class="input-area">
             <form id="chat-form">
-                <input type="text" id="user-input" placeholder="Pergunte sobre um destino..." autocomplete="off">
-                <button type="submit" id="send-btn">
+                <input type="text" id="user-input" placeholder="Pergunte sobre um destino, roteiro ou comida típica..." autocomplete="off">
+                <button type="submit" id="send-btn" aria-label="Enviar mensagem">
                     <svg viewBox="0 0 24 24" width="24" height="24">
                         <path fill="currentColor" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path>
                     </svg>
