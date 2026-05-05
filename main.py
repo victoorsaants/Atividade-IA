@@ -367,8 +367,12 @@ async def chat(request: ChatRequest) -> ChatResponse:
 
 if __name__ == "__main__":
     url = "http://127.0.0.1:8000"
+    webbrowser.open(url)
 
-    if os.environ.get("RUN_MAIN") != "true":
-        webbrowser.open(url)
-
-    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+    uvicorn.run(
+        "main:app",
+        host="127.0.0.1",
+        port=8000,
+        reload=True,
+        reload_excludes=["__pycache__", "*.pyc", ".git"],
+    )
