@@ -53,7 +53,7 @@
 
                     <header class="app-header">
                         <div class="logo-area">
-                            <div class="logo-icon">🌍</div>
+                            <div class="logo-icon"></div>
                             <h1>Turista AI</h1>
                         </div>
                         <div class="status-indicator remote" id="status-indicator">
@@ -62,12 +62,26 @@
                         </div>
                     </header>
 
+                    <div class="scroll-badge-wrapper">
+                        <button class="scroll-badge hidden" id="scroll-badge" aria-label="Nova mensagem">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 16l-6-6h12z"/>
+                            </svg>
+                            Nova mensagem
+                        </button>
+                    </div>
+
                     <main class="chat-area" id="chat-messages">
-                        <div class="message ai-message">
-                            <div class="message-content" id="welcome-message">
-                                Carregando a base turística do projeto...
+                        <div class="message-wrapper ai-wrapper">
+                            <div class="ai-avatar">
+                                <img src="/static/avatar-ai.svg" alt="Turista AI">
                             </div>
-                            <div class="message-time">Agora</div>
+                            <div class="message ai-message">
+                                <div class="message-content" id="welcome-message">
+                                    Carregando a base turística do projeto...
+                                </div>
+                                <div class="message-time">Agora</div>
+                            </div>
                         </div>
                     </main>
 

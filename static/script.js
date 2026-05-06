@@ -5,11 +5,36 @@ const suggestions = document.getElementById("suggestions");
 const statusIndicator = document.getElementById("status-indicator");
 const statusLabel = document.getElementById("status-label");
 const welcomeMessage = document.getElementById("welcome-message");
+const scrollBadge = document.getElementById("scroll-badge");
 
 const state = {
     history: [],
     destinations: [],
 };
+
+// ── Scroll badge ──────────────────────────────────────────────
+function isNearBottom() {
+    return chatMessages.scrollHeight - chatMessages.scrollTop - chatMessages.clientHeight < 60;
+}
+
+function showScrollBadge() {
+    scrollBadge.classList.remove("hidden");
+}
+
+function hideScrollBadge() {
+    scrollBadge.classList.add("hidden");
+}
+
+function scrollToBottom() {
+    chatMessages.scrollTo({ top: chatMessages.scrollHeight, behavior: "smooth" });
+    hideScrollBadge();
+}
+
+scrollBadge.addEventListener("click", scrollToBottom);
+
+chatMessages.addEventListener("scroll", () => {
+    if (isNearBottom()) hideScrollBadge();
+});
 
 const defaultSuggestions = [
     "Monte um roteiro de 3 dias no Rio de Janeiro",
@@ -52,21 +77,52 @@ function setStatus(provider) {
 }
 
 function appendMessage(sender, text) {
-    const msgDiv = document.createElement("div");
-    msgDiv.classList.add("message", `${sender}-message`);
-
     const time = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
-    msgDiv.innerHTML = `
-        <div class="message-content">${formatMessageText(text)}</div>
-        <div class="message-time">${sender === "ai" ? "TuristaIA" : "Você"} - ${time}</div>
-    `;
+    if (sender === "ai") {
+        const wrapper = document.createElement("div");
+        wrapper.classList.add("message-wrapper", "ai-wrapper");
 
-    chatMessages.appendChild(msgDiv);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+        const avatar = document.createElement("div");
+        avatar.classList.add("ai-avatar");
+        avatar.innerHTML = `<img src="/static/avatar-ai.svg" alt="Turista AI">`;
+
+        const msgDiv = document.createElement("div");
+        msgDiv.classList.add("message", "ai-message");
+        msgDiv.innerHTML = `
+            <div class="message-content">${formatMessageText(text)}</div>
+            <div class="message-time">Turista AI - ${time}</div>
+        `;
+
+        wrapper.appendChild(avatar);
+        wrapper.appendChild(msgDiv);
+        chatMessages.appendChild(wrapper);
+
+        if (isNearBottom()) {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        } else {
+            showScrollBadge();
+        }
+    } else {
+        const msgDiv = document.createElement("div");
+        msgDiv.classList.add("message", "user-message");
+        msgDiv.innerHTML = `
+            <div class="message-content">${formatMessageText(text)}</div>
+            <div class="message-time">Você - ${time}</div>
+        `;
+        chatMessages.appendChild(msgDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
 }
 
 function showTypingIndicator() {
+    const wrapper = document.createElement("div");
+    wrapper.classList.add("message-wrapper", "ai-wrapper");
+
+    const avatar = document.createElement("div");
+    avatar.classList.add("ai-avatar", "avatar-typing");
+    avatar.innerHTML = `<img src="/static/avatar-ai.svg" alt="Turista AI">`;
+
     const typingDiv = document.createElement("div");
     typingDiv.classList.add("message", "ai-message", "typing-container");
     typingDiv.innerHTML = `
@@ -78,9 +134,12 @@ function showTypingIndicator() {
             </div>
         </div>
     `;
-    chatMessages.appendChild(typingDiv);
+
+    wrapper.appendChild(avatar);
+    wrapper.appendChild(typingDiv);
+    chatMessages.appendChild(wrapper);
     chatMessages.scrollTop = chatMessages.scrollHeight;
-    return typingDiv;
+    return wrapper;
 }
 
 function trimHistory() {
@@ -201,7 +260,7 @@ async function handleSendMessage(event) {
 
 function useSuggest(text) {
     userInput.value = text;
-    handleSendMessage();
+    userInput.focus();
 }
 
 chatForm.addEventListener("submit", handleSendMessage);
