@@ -1,53 +1,130 @@
-// Base de Conhecimento Simulada
-const knowledgeBase = {
-    "paris": {
-        "descricao": "Paris, a 'Cidade Luz', é a capital da França e um centro mundial de arte, moda, gastronomia e cultura.",
-        "pontos": ["Torre Eiffel", "Museu do Louvre", "Catedral de Notre-Dame", "Arco do Triunfo"],
-        "clima": "O clima em Paris é temperado, com verões suaves e invernos frescos. A melhor época para visitar é na primavera (abril a junho).",
-        "comida": "Experimente os famosos Croissants, Escargots, Macarons e vinhos franceses de alta qualidade.",
-        "cultura": "Conhecida por seus cafés charmosos, livrarias ao longo do Sena e a vida artística em Montmartre."
-    },
-    "toquio": {
-        "descricao": "Tóquio, a capital do Japão, mistura o ultramoderno com o tradicional, de arranha-céus iluminados a templos históricos.",
-        "pontos": ["Cruzamento de Shibuya", "Templo Senso-ji", "Tokyo Skytree", "Palácio Imperial"],
-        "clima": "Subtropical úmido. Verões quentes e úmidos, invernos secos e frios. A florada das cerejeiras (Sakura) ocorre em março/abril.",
-        "comida": "Indispensável provar o Sushi autêntico, Ramen, Tempura e o delicioso Okonomiyaki.",
-        "cultura": "Uma cultura fascinante que valoriza a disciplina, a tecnologia de ponta e tradições seculares como a cerimônia do chá."
-    },
-    "rio": {
-        "descricao": "O Rio de Janeiro é uma grande cidade brasileira à beira-mar, famosa pelas praias de Copacabana e Ipanema e pelo morro do Corcovado.",
-        "pontos": ["Cristo Redentor", "Pão de Açúcar", "Praia de Copacabana", "Escadaria Selarón"],
-        "clima": "Clima tropical. Faz calor o ano todo, especialmente no verão (dezembro a março), quando ocorrem chuvas rápidas.",
-        "comida": "Não deixe de comer uma Feijoada completa, um bom Churrasco e as famosas coxinhas de padaria.",
-        "cultura": "O berço do Samba e do Carnaval. Uma cidade vibrante, alegre e com um povo extremamente acolhedor."
-    }
+const chatMessages = document.getElementById("chat-messages");
+const chatForm = document.getElementById("chat-form");
+const userInput = document.getElementById("user-input");
+const suggestions = document.getElementById("suggestions");
+const statusIndicator = document.getElementById("status-indicator");
+const statusLabel = document.getElementById("status-label");
+const welcomeMessage = document.getElementById("welcome-message");
+const scrollBadge = document.getElementById("scroll-badge");
+
+const state = {
+    history: [],
+    destinations: [],
 };
 
-// Elementos do DOM
-const chatMessages = document.getElementById('chat-messages');
-const chatForm = document.getElementById('chat-form');
-const userInput = document.getElementById('user-input');
-
-// Função para adicionar mensagem ao chat
-function appendMessage(sender, text) {
-    const msgDiv = document.createElement('div');
-    msgDiv.classList.add('message', `${sender}-message`);
-    
-    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    
-    msgDiv.innerHTML = `
-        <div class="message-content">${text}</div>
-        <div class="message-time">${sender === 'ai' ? 'TuristaIA' : 'Você'} • ${time}</div>
-    `;
-    
-    chatMessages.appendChild(msgDiv);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+// ── Scroll badge ──────────────────────────────────────────────
+function isNearBottom() {
+    return chatMessages.scrollHeight - chatMessages.scrollTop - chatMessages.clientHeight < 60;
 }
 
-// Função para mostrar indicador de digitação
+function showScrollBadge() {
+    scrollBadge.classList.remove("hidden");
+}
+
+function hideScrollBadge() {
+    scrollBadge.classList.add("hidden");
+}
+
+function scrollToBottom() {
+    chatMessages.scrollTo({ top: chatMessages.scrollHeight, behavior: "smooth" });
+    hideScrollBadge();
+}
+
+scrollBadge.addEventListener("click", scrollToBottom);
+
+chatMessages.addEventListener("scroll", () => {
+    if (isNearBottom()) hideScrollBadge();
+});
+
+const defaultSuggestions = [
+    "Monte um roteiro de 3 dias no Rio de Janeiro",
+    "O que fazer em Salvador?",
+    "Qual destino combina com gastronomia e cultura?"
+];
+
+function escapeHtml(text) {
+    return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+function formatMessageText(text) {
+    return escapeHtml(text)
+        .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+        .replace(/\n/g, "<br>");
+}
+
+function setStatus(provider) {
+    statusIndicator.classList.remove("local", "remote");
+
+    if (provider === "huggingface") {
+        statusIndicator.classList.add("remote");
+        statusLabel.textContent = "Hugging Face";
+        return;
+    }
+
+    if (provider === "local-fallback") {
+        statusIndicator.classList.add("local");
+        statusLabel.textContent = "Base local (fallback)";
+        return;
+    }
+
+    statusIndicator.classList.add("local");
+    statusLabel.textContent = "Base local";
+}
+
+function appendMessage(sender, text) {
+    const time = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+    if (sender === "ai") {
+        const wrapper = document.createElement("div");
+        wrapper.classList.add("message-wrapper", "ai-wrapper");
+
+        const avatar = document.createElement("div");
+        avatar.classList.add("ai-avatar");
+        avatar.innerHTML = `<img src="/static/avatar-ai.svg" alt="Turista AI">`;
+
+        const msgDiv = document.createElement("div");
+        msgDiv.classList.add("message", "ai-message");
+        msgDiv.innerHTML = `
+            <div class="message-content">${formatMessageText(text)}</div>
+            <div class="message-time">Turista AI - ${time}</div>
+        `;
+
+        wrapper.appendChild(avatar);
+        wrapper.appendChild(msgDiv);
+        chatMessages.appendChild(wrapper);
+
+        if (isNearBottom()) {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        } else {
+            showScrollBadge();
+        }
+    } else {
+        const msgDiv = document.createElement("div");
+        msgDiv.classList.add("message", "user-message");
+        msgDiv.innerHTML = `
+            <div class="message-content">${formatMessageText(text)}</div>
+            <div class="message-time">Você - ${time}</div>
+        `;
+        chatMessages.appendChild(msgDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+}
+
 function showTypingIndicator() {
-    const typingDiv = document.createElement('div');
-    typingDiv.classList.add('message', 'ai-message', 'typing-container');
+    const wrapper = document.createElement("div");
+    wrapper.classList.add("message-wrapper", "ai-wrapper");
+
+    const avatar = document.createElement("div");
+    avatar.classList.add("ai-avatar", "avatar-typing");
+    avatar.innerHTML = `<img src="/static/avatar-ai.svg" alt="Turista AI">`;
+
+    const typingDiv = document.createElement("div");
+    typingDiv.classList.add("message", "ai-message", "typing-container");
     typingDiv.innerHTML = `
         <div class="message-content">
             <div class="typing">
@@ -57,80 +134,137 @@ function showTypingIndicator() {
             </div>
         </div>
     `;
-    chatMessages.appendChild(typingDiv);
+
+    wrapper.appendChild(avatar);
+    wrapper.appendChild(typingDiv);
+    chatMessages.appendChild(wrapper);
     chatMessages.scrollTop = chatMessages.scrollHeight;
-    return typingDiv;
+    return wrapper;
 }
 
-// Lógica de resposta da IA
-function getAIResponse(input) {
-    const text = input.toLowerCase();
-    let city = "";
-    
-    // Identificar a cidade
-    if (text.includes("paris")) city = "paris";
-    else if (text.includes("toquio") || text.includes("tóquio")) city = "toquio";
-    else if (text.includes("rio") || text.includes("janeiro")) city = "rio";
-
-    if (!city) {
-        return "Desculpe, no momento só tenho informações detalhadas sobre **Paris**, **Tóquio** e **Rio de Janeiro**. Sobre qual dessas cidades você quer saber?";
-    }
-
-    const data = knowledgeBase[city];
-
-    // Identificar intenção
-    if (text.includes("fazer") || text.includes("ponto") || text.includes("visitar") || text.includes("lugar")) {
-        return `Em **${city.charAt(0).toUpperCase() + city.slice(1)}**, você não pode deixar de visitar: ${data.pontos.join(", ")}.`;
-    } 
-    else if (text.includes("comer") || text.includes("comida") || text.includes("gastronomia") || text.includes("restaurante")) {
-        return data.comida;
-    }
-    else if (text.includes("clima") || text.includes("tempo") || text.includes("época") || text.includes("quando ir")) {
-        return data.clima;
-    }
-    else if (text.includes("cultura") || text.includes("curiosidade") || text.includes("história")) {
-        return data.cultura;
-    }
-    else {
-        return data.descricao + " Quer saber sobre pontos turísticos, comida ou clima de lá?";
+function trimHistory() {
+    if (state.history.length > 12) {
+        state.history = state.history.slice(-12);
     }
 }
 
-// Função para enviar mensagem
-async function handleSendMessage(e) {
-    if (e) e.preventDefault();
-    
+function renderSuggestions(destinations = []) {
+    const items = destinations.length
+        ? [
+            `O que fazer em ${destinations[0]}?`,
+            `Qual a melhor época para visitar ${destinations[1] || destinations[0]}?`,
+            `Monte um roteiro em ${destinations[2] || destinations[0]}`
+        ]
+        : defaultSuggestions;
+
+    suggestions.innerHTML = "";
+
+    items.forEach((text) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "suggestion-btn";
+        button.textContent = text;
+        button.addEventListener("click", () => useSuggest(text));
+        suggestions.appendChild(button);
+    });
+}
+
+function buildWelcomeText(data) {
+    const destinations = data.destinations?.join(", ");
+    const intro = data.provider === "huggingface"
+        ? "O projeto está usando a API da Hugging Face com base turística local."
+        : "O projeto está em modo local usando a base turística cadastrada.";
+
+    return `${intro}\n\nHoje eu consigo te orientar sobre: ${destinations}.\nPode pedir roteiro, pontos turísticos, clima ideal, comida típica ou comparação entre destinos.`;
+}
+
+async function loadStatus() {
+    try {
+        const response = await fetch("/api/status");
+        if (!response.ok) {
+            throw new Error("Não foi possível carregar o status.");
+        }
+
+        const data = await response.json();
+        state.destinations = data.destinations || [];
+        setStatus(data.provider);
+        renderSuggestions(state.destinations);
+        welcomeMessage.innerHTML = formatMessageText(buildWelcomeText(data));
+    } catch (error) {
+        setStatus("local");
+        renderSuggestions();
+        welcomeMessage.innerHTML = formatMessageText(
+            "Não consegui confirmar o status da API agora, mas a base local continua pronta para responder."
+        );
+    }
+}
+
+async function handleSendMessage(event) {
+    if (event) {
+        event.preventDefault();
+    }
+
     const message = userInput.value.trim();
-    if (!message) return;
+    if (!message) {
+        return;
+    }
 
-    // Mensagem do usuário
-    appendMessage('user', message);
-    userInput.value = '';
+    const historyToSend = state.history.slice(-8);
+    appendMessage("user", message);
+    userInput.value = "";
 
-    // Simulação de "Pensando"
     const typingIndicator = showTypingIndicator();
-    
-    // Delay aleatório para simular processamento (1s a 2s)
-    await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1000));
-    
-    // Remover indicador de digitação
-    typingIndicator.remove();
 
-    // Gerar resposta
-    const response = getAIResponse(message);
-    
-    // Simular digitação da resposta (opcionalmente mais lento para frases longas)
-    appendMessage('ai', response);
+    try {
+        const response = await fetch("/api/chat", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                message,
+                history: historyToSend
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error("Falha ao consultar o backend.");
+        }
+
+        const data = await response.json();
+        typingIndicator.remove();
+
+        appendMessage("ai", data.answer);
+        state.history.push(
+            { role: "user", content: message },
+            { role: "assistant", content: data.answer }
+        );
+        trimHistory();
+
+        if (data.provider) {
+            setStatus(data.provider);
+        }
+
+        if (Array.isArray(data.destinations) && data.destinations.length) {
+            renderSuggestions(data.destinations);
+        }
+    } catch (error) {
+        typingIndicator.remove();
+        appendMessage(
+            "ai",
+            "Tive um problema para responder agora. Verifique se o backend está rodando e se o token da Hugging Face foi configurado."
+        );
+        setStatus("local");
+    }
 }
 
-// Função de sugestão
 function useSuggest(text) {
     userInput.value = text;
-    handleSendMessage();
+    userInput.focus();
 }
 
-// Event Listeners
-chatForm.addEventListener('submit', handleSendMessage);
-
-// Focar no input ao carregar
-window.onload = () => userInput.focus();
+chatForm.addEventListener("submit", handleSendMessage);
+window.addEventListener("load", async () => {
+    await loadStatus();
+    userInput.focus();
+});

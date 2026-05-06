@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e3a8a"/>
+      <stop offset="100%" stop-color="#3b82f6"/>
+    </linearGradient>
+    <clipPath id="avatarClip">
+      <circle cx="50" cy="50" r="50"/>
+    </clipPath>
+  </defs>
+
+  <!-- Fundo degradê -->
+  <circle cx="50" cy="50" r="50" fill="url(#bgGrad)"/>
+
+  <g clip-path="url(#avatarClip)">
+
+    <!-- Corpo / camiseta -->
+    <ellipse cx="50" cy="100" rx="38" ry="22" fill="#2563eb"/>
+    <rect x="12" y="82" width="76" height="20" fill="#2563eb"/>
+
+    <!-- Detalhe gola -->
+    <path d="M38 82 Q50 90 62 82" fill="#1d4ed8"/>
+
+    <!-- Pescoço -->
+    <rect x="43" y="68" width="14" height="17" rx="5" fill="#fdba9d"/>
+
+    <!-- Orelha esquerda -->
+    <ellipse cx="26" cy="51" rx="5" ry="6" fill="#fdba9d"/>
+    <ellipse cx="26" cy="51" rx="3" ry="4" fill="#f4a07a"/>
+
+    <!-- Orelha direita -->
+    <ellipse cx="74" cy="51" rx="5" ry="6" fill="#fdba9d"/>
+    <ellipse cx="74" cy="51" rx="3" ry="4" fill="#f4a07a"/>
+
+    <!-- Cabeça -->
+    <ellipse cx="50" cy="50" rx="24" ry="26" fill="#fdba9d"/>
+
+    <!-- Cabelo - topo -->
+    <ellipse cx="50" cy="27" rx="24" ry="14" fill="#1e293b"/>
+    <rect x="26" y="27" width="48" height="14" fill="#1e293b"/>
+
+    <!-- Cabelo - lateral esquerda -->
+    <ellipse cx="28" cy="42" rx="5.5" ry="9" fill="#1e293b"/>
+
+    <!-- Cabelo - lateral direita -->
+    <ellipse cx="72" cy="42" rx="5.5" ry="9" fill="#1e293b"/>
+
+    <!-- Sobrancelha esquerda -->
+    <path d="M35 42 Q41 38.5 47 41" stroke="#1e293b" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+
+    <!-- Sobrancelha direita -->
+    <path d="M53 41 Q59 38.5 65 42" stroke="#1e293b" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+
+    <!-- Olho esquerdo - branco -->
+    <ellipse cx="41" cy="50" rx="5.5" ry="5" fill="white"/>
+    <!-- Olho esquerdo - íris -->
+    <circle cx="41" cy="51" r="3.2" fill="#1e293b"/>
+    <!-- Olho esquerdo - brilho -->
+    <circle cx="42.5" cy="49.5" r="1.1" fill="white"/>
+
+    <!-- Olho direito - branco -->
+    <ellipse cx="59" cy="50" rx="5.5" ry="5" fill="white"/>
+    <!-- Olho direito - íris -->
+    <circle cx="59" cy="51" r="3.2" fill="#1e293b"/>
+    <!-- Olho direito - brilho -->
+    <circle cx="60.5" cy="49.5" r="1.1" fill="white"/>
+
+    <!-- Nariz -->
+    <path d="M47.5 56 Q50 60 52.5 56" stroke="#d4855e" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+
+    <!-- Bochecha esquerda -->
+    <ellipse cx="34" cy="59" rx="6.5" ry="4" fill="#f87171" opacity="0.38"/>
+
+    <!-- Bochecha direita -->
+    <ellipse cx="66" cy="59" rx="6.5" ry="4" fill="#f87171" opacity="0.38"/>
+
+    <!-- Sorriso -->
+    <path d="M41 63 Q50 72 59 63" stroke="#c4674a" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Interior boca -->
+    <path d="M43 64.5 Q50 70 57 64.5" fill="#c4674a" opacity="0.25"/>
+
+  </g>
+</svg>
