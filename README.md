@@ -1,4 +1,4 @@
-# Turista AI
+## Turista AI
 
 Projeto simples com `FastAPI` no backend e interface web para responder perguntas turísticas.
 
